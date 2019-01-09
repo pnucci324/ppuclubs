@@ -2,37 +2,53 @@ h1{
 text-align: center;
 }
 
-ul {
-  list-style-type: none;
-  margin: 0;
+*{
+  margin:0;
   padding: 0;
-  overflow: hidden;
-  background-color: #333;
-  list-style: none;
+  user-select: none;
 }
 
-li {
-  float: left;
+body{
+  font-family: monospace;
 }
 
-li a {
-  display: block;
+.container nav.desk{
+  width: 100%;
+  background: black;
+  height:60px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14);
+  position: fixed;
+  top: 60px;
+  left: 0;
   color: white;
+}
+
+nav.desk ul{
+  list-style: none;
+  width: 75%;
+  height:60px;
+  margin: 0 auto;
+}
+
+nav.desk li {
+  width: 20%;
+  float: left;
   text-align: center;
-  padding: 14px 16px;
+  line-height: 60px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+nav ul li a{
   text-decoration: none;
 }
 
-/* Change the link color to #111 (black) on hover */
-li a:hover {
-  background-color: #111;
+nav.desk ul li:hover{
+  background: #a3ada5;
+  color: black;
 }
-button{
-  padding: 0;
-  border: none;
-  background: none;
-  color: white;
-}
-.active {
-  background-color: #4CAF50;
+nav.desk ul li.active{
+  background: #a3ada5;
+  color: black;
 }
