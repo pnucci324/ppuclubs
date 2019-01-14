@@ -1,15 +1,28 @@
-h1{
-text-align: center;
-}
-
 *{
   margin:0;
   padding: 0;
   user-select: none;
 }
 
+@font-face {
+    font-family: 'Title'; /*a name to be used later*/
+    src: url('Aver Bold.ttf'); /*URL to font*/
+}
+
+h1{
+text-align: center;
+font-family: Title;
+color: white;
+}
+
 body{
-  font-family: monospace;
+  background-color: #26a655;
+}
+
+p.construction{
+  color: white;
+  text-align: center;
+  font-size: 40px;  
 }
 
 .container nav.desk{
