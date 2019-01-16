@@ -17,6 +17,15 @@ app.get('/', function(req, res) {
 app.get('/about', function(req, res) {
 	res.render('about');
 });
+app.get('/search', function(req, res) {
+	res.render('search');
+});
+app.get('/create', function(req, res) {
+	res.render('create');
+});
+app.get('/contact', function(req, res) {
+	res.render('contact');
+});
 
 
 //custom 404 page
