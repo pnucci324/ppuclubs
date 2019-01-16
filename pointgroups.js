@@ -9,6 +9,8 @@ app.set('view engine', 'handlebars');
 
 app.use(express.static(__dirname + '/public'));
 
+app.use('/css', express.static('css'));
+
 app.set ('port', process.env.PORT || 3000);
 
 app.get('/', function(req, res) {
