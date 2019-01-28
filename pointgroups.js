@@ -36,7 +36,13 @@ app.get('/about', function(req, res) {
 	);
 });
 app.get('/search', function(req, res) {
-	res.render('search');
+	res.render('search',
+		{
+			page: "search",
+			title: "Search",
+			isSearch: true,
+		}
+	);
 });
 app.get('/create', function(req, res) {
 	res.render('create',
@@ -48,7 +54,13 @@ app.get('/create', function(req, res) {
 	);
 });
 app.get('/contact', function(req, res) {
-	res.render('contact');
+	res.render('contact',
+		{
+			page: "contact",
+			title: "Contact",
+			isContact: true;,
+		}
+	);
 });
 
 
