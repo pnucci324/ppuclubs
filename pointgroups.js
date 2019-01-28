@@ -19,16 +19,33 @@ app.use('/js', express.static('js'));
 app.set ('port', process.env.PORT || 3000);
 
 app.get('/', function(req, res) {
-	res.render('home');
+	res.render('home',
+		{
+			page: "home",
+			title: "PPUclubs",
+		}
+	);
 });
 app.get('/about', function(req, res) {
-	res.render('about');
+	res.render('about',
+		{
+			page: "about",
+			title: "About",
+			isAbout: true,
+		}
+	);
 });
 app.get('/search', function(req, res) {
 	res.render('search');
 });
 app.get('/create', function(req, res) {
-	res.render('create');
+	res.render('create',
+		{
+			page: "create",
+			title: "Create",
+			isCreate: true,
+		}
+	);
 });
 app.get('/contact', function(req, res) {
 	res.render('contact');
