@@ -2,6 +2,11 @@ var express = require('express');
 var app = express();
 var jquery = require('jquery');
 
+var mysql = require("mysql");
+var credentials = require("./credentials");
+var qs = require("querystring");
+var session = require('express-session');
+
 //set up handlebars
 var handlebars = require('express-handlebars')
         .create({ defaultLayout:'main'});
@@ -17,6 +22,14 @@ app.use('/img', express.static('img'));
 app.use('/js', express.static('js'));
 
 app.set ('port', process.env.PORT || 3000);
+
+app.use(require('cookie-parser')(credentials.cookieSecret));
+app.use(require('body-parser').urlencoded({ extended: true}));
+app.use(require('express-session'({
+	resave: false,
+	saveUninitialized: false;
+	secret: credentials.cookieSecret
+}));
 
 app.get('/', function(req, res) {
 	res.render('home',
