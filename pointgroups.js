@@ -24,8 +24,8 @@ app.use('/js', express.static('js'));
 app.set ('port', process.env.PORT || 3000);
 
 app.use(require('cookie-parser')(credentials.cookieSecret));
-app.use(require('body-parser').urlencoded({ extended: true}));
-app.use(require('express-session'({
+app.use(require('body-parser').urlencoded({ extended: true }));
+app.use(require('express-session')({
 	resave: false,
 	saveUninitialized: false,
 	secret: credentials.cookieSecret
@@ -71,7 +71,7 @@ app.get('/contact', function(req, res) {
 		{
 			page: "contact",
 			title: "Contact",
-			isContact: true;,
+			isContact: true,
 		}
 	);
 });
