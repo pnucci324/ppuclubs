@@ -73,6 +73,46 @@ req.on("end", function(){
 	
 
 
+function addUser(req, res){
+        var body = "";
+        req.on("data", function (data) {
+                body += data;
+        //le6 ==! * Math.pow(10, 6) ===1 * 1000000 ~~~ 1MB
+        if(body.length > 1e6){
+                //FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
+                req.connection.destroy();
+        }
+})
+req.on("end", function(){
+        var injson = JSON.parse(body);
+        var conn = mysql.createConnection(credentials.connection);
+        //connect to datatbase
+        conn.connect(function (err){
+                if (err){
+                        console.error("ERROR: connot connect: " + e);
+                        return;
+                }
+                //query the database
+                con.query("INSERT INTO THE USER (GROUP) VALUE (?)", [injson.name], function (err, row, fields){
+                        //build json result object
+                        var outjson = {};
+                        if (err){
+                                //query failed
+                                outjson.success = false;
+                                outjson.message = "Query failed: " + err;
+                        }
+                        else {
+                                //query successful
+                                outjson.success = true;
+                                outjson.message = "Query successful!";
+                        }
+                        //return json object that contains the result of the query
+                        sendResponse(req, res, outjson);
+                });
+        });
+});
+}
+
 app.get('/', function(req, res) {
 	res.render('home',
 		{
