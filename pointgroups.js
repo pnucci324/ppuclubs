@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var jquery = require('jquery');
 
+var http = require("http");
 var mysql = require("mysql");
 var credentials = require("./credentials");
 var qs = require("querystring");
@@ -157,7 +158,24 @@ app.get('/contact', function(req, res) {
 		}
 	);
 });
-
+//Sessions for login or group make
+/*app.post('/process',function(req, res){
+	if(req.xhr || req.accepts('json,html') === 'json'){
+		res.send({ success: true });
+		loginCounter += 1;
+		req.session.user = {
+			username: req.body.username,
+			password: req.body.password,
+		};
+		console.log('test');
+		verifyUser(req.session.user, function(result){
+			console.log('Successful login!');
+		} else {
+			console.log('Unsussessufl login attempt!');
+		}
+	})
+}
+});*/
 
 
 
