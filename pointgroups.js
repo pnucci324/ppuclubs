@@ -71,7 +71,7 @@ req.on("end", function(){
 	});
 });
 }
-	
+
 
 
 function addUser(req, res){
@@ -137,6 +137,16 @@ app.get('/search', function(req, res) {
 			page: "search",
 			title: "Search",
 			isSearch: true,
+		}
+	);
+});
+
+app.get('/login', function(req, res) {
+	res.render('login',
+		{
+			page: "login",
+			title: "login",
+			isLogin: true,
 		}
 	);
 });
