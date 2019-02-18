@@ -11,13 +11,13 @@ var session = require('express-session');
 
 //set up handlebars
 var handlebars = require('express-handlebars')
-<<<<<<< HEAD
+
 
         .create({ defaultLayout:'main'});
 
-=======
-.create({ defaultLayout:'main'});
->>>>>>> a6be45a43bfaaa2987f1ae742f7ea2eb20497d09
+
+
+
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
