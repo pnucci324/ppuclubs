@@ -8,6 +8,7 @@ var credentials = require("./credentials");
 var qs = require("querystring");
 var session = require('express-session');
 
+
 //set up handlebars
 var handlebars = require('express-handlebars')
 
@@ -34,7 +35,37 @@ app.use(require('express-session')({
 	secret: credentials.cookieSecret
 }));
 
-function addGroup(req, res){
+var con = mysql.createConnection({
+  host: "db.it.pointpark.edu",
+  user: 'ppuclubs',
+  password: 'ppuclubs',
+  database: 'ppuclubs'
+});
+
+con.connect(function (err) {
+    if (!err)
+        console.log("Connection made with the database")
+    else
+        console.log("DB connection failed \n Error:" + JSON.stringify(err, undefined, 2));
+});
+
+app.post('/login', function(req, res) {
+
+  var sql = "insert into UserInfo(UserFirstName, UserLastName, UserPhoneNumber, UserEmail, UserPassword) values ( '" + req.body.FirstName +"', '" + req.body.LastName +"', '" + req.body.Email +"', '" + req.body.Phone + "', '" + req.body.Password + "')";
+
+  con.query(sql, function (err) {
+    if (err)
+    console.log("Not successful");
+  })
+
+})
+
+
+
+
+con.end();
+
+/*function addGroup(req, res){
 	var body = "";
 	req.on("data", function (data) {
 		body += data;
@@ -115,7 +146,7 @@ req.on("end", function(){
         });
 });
 }
-
+*/
 app.get('/', function(req, res) {
 	res.render('home',
 		{
@@ -133,14 +164,14 @@ app.get('/about', function(req, res) {
 		}
 	);
 });
-app.get('/search', function(req, res) {
-	res.render('search',
-		{
-			page: "search",
-			title: "Search",
-			isSearch: true,
-		}
-	);
+app.get('/search', function (req, res) {
+    res.render('search',
+        {
+            page: "search",
+            title: "Search",
+            isSearch: true,
+        }
+    )
 });
 
 app.get('/login', function(req, res) {
@@ -151,6 +182,9 @@ app.get('/login', function(req, res) {
 			isLogin: true,
 		}
 	);
+
+
+
 });
 app.get('/create', function(req, res) {
 	res.render('create',
