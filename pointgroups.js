@@ -111,7 +111,7 @@ app.get('/search', function(req, res){
 
 })
 
-
+//add user
 app.get('/', function(req, res) {
   res.render('home',
   {
