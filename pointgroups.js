@@ -171,24 +171,11 @@ app.get('/contact', function(req, res) {
   }
 );
 });
+
+//verify user
+
 //Sessions for login or group make
-/*app.post('/process',function(req, res){
-if(req.xhr || req.accepts('json,html') === 'json'){
-res.send({ success: true });
-loginCounter += 1;
-req.session.user = {
-username: req.body.username,
-password: req.body.password,
-};
-console.log('test');
-verifyUser(req.session.user, function(result){
-console.log('Successful login!');
-} else {
-console.log('Unsussessufl login attempt!');
-}
-})
-}
-});*/
+		
 
 
 
