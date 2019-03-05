@@ -1,0 +1,28 @@
+<h1 class="display-1 text-center">Welcome to your Group's Homepage</h1>
+
+<p class="lead text-center"> Current Members </p>
+<div class="container align-center">
+<button type="button" class="btn btn-success">Add a Member</button>
+<button type="button" class="btn btn-info">Add an Evenet</button>
+<button type="button" class="btn btn-info">View Events</button>
+</div>
+<hr>
+<div class="container">
+  <table class="table">
+    <thead>
+      <th scope="col"> First Name </th>
+      <th score="col"> Last Name </th>
+      <th score="col"> Email </th>
+    </thead>
+    <tbody>
+      {{#each results}}
+      <tr>
+        <td>{{this.UserFirstName}}</td>
+        <td>{{this.UserLastName}}</td>
+        <td><a href="mailto:{{this.UserEmail}}">{{this.UserEmail}}</a></td>
+        <td><button type="button" class="btn btn-danger">Remove Member</button></td>
+        </tr>
+        {{/each}}
+      </tbody>
+  </table>
+</div>
