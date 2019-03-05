@@ -33,6 +33,11 @@ app.use(require('express-session')({
   secret: credentials.cookieSecret
 }));
 
+app.use(function( req, res, next) {
+  console.log(req.url);
+  next();
+})
+
 var con = mysql.createConnection({
   host: "db.it.pointpark.edu",
   user: 'ppuclubs',
@@ -67,51 +72,85 @@ app.get('/search', function(req, res){
       results: results
     });
   });
+});
+
+app.post('/login', function (req, res) {
+  console.log("working");
 
 
-  app.post('/login', function (req, res) {
 
-         var conn = mysql.createConnection(credentials.connection);
+  var injson = {
+    "UserID": null,
+    "UserFirstName": req.body.FirstName,
+    "UserLastName":  req.body.LastName,
+    "UserEmail":  req.body.Email,
+    "UserPhoneNumber":  req.body.Phone,
+    "UserPassword":  req.body.Password
+  }
 
-   var injson = {
-                 "FirstName": req.body.firstname,
-                 "LastName":  req.body.lastname,
-                 "Email":  req.body.Email,
-                 "Phone":  req.body.Phone,
-                 "Password":  req.body.Password
-         }
+console.log(injson);
+    // query the database
+    con.query("INSERT INTO UserInfo (UserFirstName,UserLastName,UserPhoneNumber,UserEmail,UserPassword) VALUES ('" + req.body.FirstName + "', '" + req.body.LastName + "', '" + req.body.Phone + "', '" + req.body.Email + "', '" + req.body.Password + "');", injson, function(err, rows, fields) {
 
-   // connect to database
-   conn.connect(function(err) {
-     if (err) {
-       console.error("ERROR: cannot connect: " + e);
-       return;
-     }
-     // query the database
-     conn.query("INSERT INTO UserInfo SET ?", injson, function(err, rows, fields) {
-       // build json result object
-       var outjson = {};
-       if (err) {
-         // query failed
-         outjson.success = false;
-         outjson.message = "Query failed: " + err;
-       }
-       else {
-         // query successful
-         outjson.success = true;
-         outjson.message = "Query successful!";
-       }
-       // return json object that contains the result of the query
-       res.redirect('/login');
-     });
-     conn.end();
-   });
-  });
+      // build json result object
+      var outjson = {};
+      if (err) {
+        // query failed
+        console.log(err);
+        outjson.success = false;
+        outjson.message = "Query failed: " + err;
+      }
+      else {
+        // query successful
+        outjson.success = true;
+        outjson.message = "Query successful!";
+      }
+      // return json object that contains the result of the query
 
 
-})
+      res.redirect('login');
+    });
+});
 
-//add user
+app.post('/create', function (req, res) {
+  console.log("working");
+  var injson = {
+    "GroupID": null,
+    "GroupName":req.body.GroupName,
+    "GroupDescription": req.body.GroupDescription
+};
+console.log(injson);
+    // query the database
+    con.query("INSERT INTO GroupInfo (GroupName,GroupDescription) VALUES ('" + req.body.GroupName + "', '" + req.body.GroupDescription + "');", injson, function(err, rows, fields) {
+      // build json result object
+      var outjson = {};
+      if (err) {
+        // query failed
+        console.log(err);
+        outjson.success = false;
+        outjson.message = "Query failed: " + err;
+      }
+      else {
+        // query successful
+        outjson.success = true;
+        outjson.message = "Query successful!";
+      }
+      // return json object that contains the result of the query
+console.log(req.body.GroupName);
+
+      res.redirect('search');
+    });
+});
+
+
+
+
+//con.end();
+
+
+
+
+
 app.get('/', function(req, res) {
   res.render('home',
   {
@@ -172,10 +211,45 @@ app.get('/contact', function(req, res) {
 );
 });
 
-//verify user
+app.get('/groups', function(req, res){
+
+  var sqlQuery = 'SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where GroupName like "PointPark"';
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+    console.log("here are the results for your query: ");
+    console.log(results);
+
+    res.render('groups', {
+      title: "Example Database - Is this working??",
+      results: results
+    });
+  });
+});
+
+app.get('/groups', function(req,res){
+
+});
 
 //Sessions for login or group make
-		
+/*app.post('/process',function(req, res){
+if(req.xhr || req.accepts('json,html') === 'json'){
+res.send({ success: true });
+loginCounter += 1;
+req.session.user = {
+username: req.body.username,
+password: req.body.password,
+};
+console.log('test');
+verifyUser(req.session.user, function(result){
+console.log('Successful login!');
+} else {
+console.log('Unsussessufl login attempt!');
+}
+})
+}
+});*/
 
 
 
