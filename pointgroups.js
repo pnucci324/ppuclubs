@@ -112,6 +112,16 @@ app.get('/search', function(req, res){
 })
 
 //add user
+function addUser(req,res){
+	var body = "";
+	req.on('data',function(data){
+		body += data;
+		//1e6 == 1 * math.pow(10,6) === 1 * 1000000 ~~~ 1MB
+		if(body.length > 1e6){
+			//flood attack or faulty client, nuke request
+			req.connection.destroy();
+		}
+	})
 app.get('/', function(req, res) {
   res.render('home',
   {
