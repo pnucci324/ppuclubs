@@ -19,7 +19,8 @@
         <tr>
             <td>{{this.GroupName}}</td>
             <td>{{this.GroupDescription}}</td>
-            <td><button type="submit" class="btn btn-info">Join</button>
+            <td><button onclick="joinGroup()" type="submit" class="btn btn-info">Join</button>
+            <td><button type="submit" class="btn btn-info"><a href="groups/{{this.GroupName}}">View</a></button>
         </tr>
         {{/each}}
       </tbody>
