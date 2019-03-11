@@ -2,15 +2,15 @@
 <h1 class="text-center"> Create Your Group</h2>
 
 <div class="container">
-
+  <form action="create" id="tab" method="POST">
         <div class="form-group">
           <label>Group Name</label>
-          <input type="text" class="form-control" placeholder="Group Name"></input>
+          <input name="GroupName" type="text" class="form-control" placeholder="Group Name"></input>
         </div>
 
         <div class="form-group">
           <label>Description</label>
-          <textarea class="form-control" placeholder="Provide a description of your group"></textarea>
+          <textarea name ="GroupDescription" class="form-control" placeholder="Provide a description of your group"></textarea>
         </div>
 
         <button type="submit" class="btn btn-default">Create</button>
