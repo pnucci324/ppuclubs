@@ -1,5 +1,6 @@
-<h1 class="display-1 text-center">Welcome to your Group's Homepage</h1>
-
+{{#each results}}
+<h1 class="display-1 text-center">Welcome to {{this.GroupName}}'s Homepage</h1>
+{{/each}}
 <p class="lead text-center"> Current Members </p>
 <div class="container align-center">
 <button type="button" class="btn btn-success">Add a Member</button>
@@ -20,7 +21,7 @@
         <td>{{this.UserFirstName}}</td>
         <td>{{this.UserLastName}}</td>
         <td><a href="mailto:{{this.UserEmail}}">{{this.UserEmail}}</a></td>
-        <td><button type="button" class="btn btn-danger">Remove Member</button></td>
+        <td><button onclick="removeUser()" type="button" class="btn btn-danger">Remove Member</button></td>
         </tr>
         {{/each}}
       </tbody>
