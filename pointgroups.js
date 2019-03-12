@@ -1,3 +1,4 @@
+
 var express = require('express');
 var app = express();
 var jquery = require('jquery');
@@ -24,6 +25,8 @@ app.use('/img', express.static('img'));
 app.use('/js', express.static('js'));
 
 app.set ('port', process.env.PORT || 3000);
+
+//app.set('views', __dirname + '/views');
 
 app.use(require('cookie-parser')(credentials.cookieSecret));
 app.use(require('body-parser').urlencoded({ extended: true }));
@@ -59,7 +62,7 @@ con.connect(function (err) {
 app.get('/search', function(req, res){
   console.log('inside of app.get for the home page');
 
-  var sqlQuery = 'select GroupName, GroupDescription from GroupInfo';
+  var sqlQuery = 'select GroupID, GroupName, GroupDescription from GroupInfo';
 
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
@@ -132,23 +135,16 @@ console.log(injson);
       }
       else {
         // query successful
+        console.log(rows);
         outjson.success = true;
         outjson.message = "Query successful!";
       }
       // return json object that contains the result of the query
-console.log(req.body.GroupName);
+          console.log(req.body.GroupName);
 
-      res.redirect('search');
+      res.redirect('groups?ID=' + rows.insertId);
     });
 });
-
-
-
-
-//con.end();
-
-
-
 
 
 app.get('/', function(req, res) {
@@ -160,15 +156,34 @@ app.get('/', function(req, res) {
 );
 });
 
-app.get('/search', function (req, res) {
-  res.render('search',
+
+app.get('/events', function (req, res) {
+  res.render('events',
   {
-    page: "search",
-    title: "Search",
-    isSearch: true,
+    page: "events",
+    title: "Events",
+    isEvents: true,
   }
 )
-})
+});
+
+
+app.get('/groups', function(req, res){
+
+  var sqlQuery = 'SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where GroupID = ' + req.query.ID;
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+    res.render('groups', {
+      title: "Example Database - Is this working??",
+      results: results
+    });
+    console.log(results);
+  });
+});
+
+
 
 app.get('/about', function(req, res) {
   res.render('about',
@@ -179,6 +194,8 @@ app.get('/about', function(req, res) {
   }
 );
 });
+
+
 
 app.get('/login', function(req, res) {
   res.render('login',
@@ -210,70 +227,8 @@ app.get('/contact', function(req, res) {
   }
 );
 });
-//addUser
-/*function addUser(req,res){
-	var body= "";
-	req.on('data', function(data){
-		body += data;
-		//1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-		if(body.length > 1e6){
-			//FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
-			req.connection.destroy();
-		}
-	})
-	req.on('end', function(){
-		var injson = JSON.parse(body);
-		var conn = mysql.createConnection(credentials.connection)[
-		//connect to database
-		conn.connect(function (err){
-			if(err){
-				console.error("ERROR: cannot conect: " + e);
-				return;
-			}
-			//query the database
-			conn.query("INSERT INTO USER(NAME) VALUE(?)", [injon.name], function(err, rows, fields){
-				//build json resut object
-				var outjson = {};
-				if(err){
-					//query failed
-					outjson.success = false;
-					outjson.message = "Query failed: " + err;
-				}else{
-					//query successful
-					outjson.success = true;
-					ousjson.message = "Query sucessful!";
-				}
-				//return json object that contains the resutl fo the query
-				sendResponse(req, res, outjson);
-			});
-			conn.end();
-		})
-	});
-}*/
-
-//verify user
 
 
-app.get('/groups', function(req, res){
-
-  var sqlQuery = 'SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where GroupName like "PointPark"';
-
-  con.query(sqlQuery, function(error, results, fields){
-    if(error) throw error;
-
-    console.log("here are the results for your query: ");
-    console.log(results);
-
-    res.render('groups', {
-      title: "Example Database - Is this working??",
-      results: results
-    });
-  });
-});
-
-app.get('/groups', function(req,res){
-
-});
 
 //Sessions for login or group make
 /*app.post('/process',function(req, res){
@@ -315,4 +270,3 @@ app.listen(app.get('port'), function(){
   console.log( 'Express started on http://localhost: ' +
   app.get('port') + '; press Ctrl-C to terminate.');
 });
-
