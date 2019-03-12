@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var jquery = require('jquery');
@@ -228,30 +227,52 @@ app.get('/contact', function(req, res) {
 );
 });
 
+//addUser
+/*function addUser(req,res){
+	var body= "";
+	req.on('data', function(data){
+		body += data;
+		//1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+		if(body.length > 1e6){
+			//FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
+			req.connection.destroy();
+		}
+	})
+	req.on('end', function(){
+		var injson = JSON.parse(body);
+		var conn = mysql.createConnection(credentials.connection)[
+		//connect to database
+		conn.connect(function (err){
+			if(err){
+				console.error("ERROR: cannot conect: " + e);
+				return;
+			}
+			//query the database
+			conn.query("INSERT INTO USER(NAME) VALUE(?)", [injon.name], function(err, rows, fields){
+				//build json resut object
+				var outjson = {};
+				if(err){
+					//query failed
+					outjson.success = false;
+					outjson.message = "Query failed: " + err;
+				}else{
+					//query successful
+					outjson.success = true;
+					ousjson.message = "Query sucessful!";
+				}
+				//return json object that contains the resutl fo the query
+				sendResponse(req, res, outjson);
+			});
+			conn.end();
+		})
+	});
+}*/
+
+ //verify user
 
 
-//Sessions for login or group make
-/*app.post('/process',function(req, res){
-if(req.xhr || req.accepts('json,html') === 'json'){
-res.send({ success: true });
-loginCounter += 1;
-req.session.user = {
-username: req.body.username,
-password: req.body.password,
-};
-console.log('test');
-verifyUser(req.session.user, function(result){
-console.log('Successful login!');
-} else {
-console.log('Unsussessufl login attempt!');
-}
-})
-}
-});*/
 
 
-
-//custom 404 page
 app.use(function(req,res){
   res.type('text/plain');
   res.status(404);
