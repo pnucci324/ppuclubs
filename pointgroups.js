@@ -227,6 +227,14 @@ app.get('/contact', function(req, res) {
 );
 });
 
+app.get('/events', function(req, res){
+  res.render('events');
+});
+
+app.get('/addEvent', function(req, res){
+  res.render('addEvent');
+});
+
 //addUser
 /*function addUser(req,res){
 	var body= "";
