@@ -156,8 +156,8 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/fullcalendar', function (req, res) {
-  res.render('calendar',
+app.get('/calendar', function (req, res) {
+	res.render('calendar',
   {
     page: "calendar",
     title: "Calendar",
