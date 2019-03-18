@@ -156,11 +156,11 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/events', function (req, res) {
-  res.render('events',
+app.get('/calendar', function (req, res) {
+	res.render('calendar',
   {
-    page: "events",
-    title: "Events",
+    page: "calendar",
+    title: "Calendar",
     isEvents: true,
   }
 )
