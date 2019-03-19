@@ -292,7 +292,7 @@ app.use(function(err,req,res,next){
   console.error(err.stack);
   res.type('text/plain');
   res.status(500);
-  res.send('500 - Sever Error');
+  res.send('500 - Server Error');
 });
 
 app.listen(app.get('port'), function(){
