@@ -163,7 +163,7 @@ app.get('/calendar', function (req, res) {
     title: "Calendar",
     isCalendar: true,
   }
-
+)
 });
 
 app.get('/events',function(req,res){
@@ -173,7 +173,7 @@ app.get('/events',function(req,res){
 		title: 'Events',
 		isEvents: true,
 	}
-
+)
 });
 
 
