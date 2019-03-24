@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var jquery = require('jquery');
-
+var fs = require('fs');
 var http = require("http");
 var mysql = require("mysql");
 var credentials = require("./credentials");
@@ -245,6 +245,36 @@ app.get('/addEvent', function(req, res){
   res.render('addEvent');
 });
 
+//users
+function users(req,res){
+        var conn = mysql.createConenction(credentials.conenction);
+        //connect to database
+        conn.connect(function (err){
+                if (err){
+                        console.error("ERROR: connot connect: " + err);
+                        return;
+                }
+                //query the database
+                conn.query("SELECT * FROM USERS", function (err, rows, fields){
+                        //build json result object
+                        var outjson = {};
+                        if (err){
+                                //query failed
+                                outjson.success = false;
+                                outjson.message = "Query failed: " + err;
+                        }
+                        else{
+                                //query successful
+                                outjson.success = true;
+                                outjson.message = "Query sucessful!";
+                                outjson.data = rows;
+                        }
+                        //return json object that contains the result of the query
+                        conn.end();
+                        sendResponse(req,res,outjson);
+                });
+        });
+}
 //addUser
 /*function addUser(req,res){
 	var body= "";
@@ -282,11 +312,13 @@ app.get('/addEvent', function(req, res){
 				sendResponse(req, res, outjson);
 			});
 			conn.end();
-		})
+		});
 	});
 }*/
 
- //verify user
+
+//verify user
+
 
 
 
