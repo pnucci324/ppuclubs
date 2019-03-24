@@ -276,7 +276,7 @@ function users(req,res){
         });
 }
 //addUser
-/*function addUser(req,res){
+function addUser(req,res){
 	var body= "";
 	req.on('data', function(data){
 		body += data;
@@ -288,7 +288,7 @@ function users(req,res){
 	})
 	req.on('end', function(){
 		var injson = JSON.parse(body);
-		var conn = mysql.createConnection(credentials.connection)[
+		var conn = mysql.createConnection(credentials.connection);
 		//connect to database
 		conn.connect(function (err){
 			if(err){
@@ -314,7 +314,7 @@ function users(req,res){
 			conn.end();
 		});
 	});
-}*/
+}
 
 
 //verify user
