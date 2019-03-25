@@ -318,6 +318,52 @@ function addUser(req,res){
 
 
 //verify user
+function verifyUser(attemptCreds, cb){
+	//connect to database
+	var conn = mysql.createConnection(credentials.connection);
+	conn.connect(function (err){
+		if (err){
+			console.error("Error reaching MySQL: ", credentials.connection);
+			return false;
+		}
+		conn.query("SELECT loginId, password FROM ppuclubs.USERS where loginId = (?)", attemptCreds.username, function (err, rows, fields){
+			if(rows.length === 1){
+				//users mached in SQL query, 1 result returned.
+				//Return true if the password matches
+				console.log(rows[0].password === attemptCreds.password);
+				if(rows[0].password === attemptCreds.password){
+					//Login success, passwords match
+					cb(true);
+				}else{
+					//Login failed, passwords do not match
+					cb(false);
+				}
+			}else{
+				cb(false);
+			}
+		});
+	});
+}
+//sessions
+app.post('/process', function (req, res) {
+	if (req.xhr || req.accepts('json,html') === 'json') {
+		res.send({ success: true });
+		loginCounter += 1;
+		req.session.user = {
+			username: req.body.username,
+			password: req.body.password, 
+		};
+		console.log("test");
+		verifyUser(req.session.user, function(result) {
+			if (result) {
+				console.log("Successful login!");
+			} else {
+				console.log("Unsuccessful login attempt!");
+			}
+		});
+	}
+});
+
 
 
 
