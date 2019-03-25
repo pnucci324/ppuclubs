@@ -166,14 +166,33 @@ app.get('/calendar', function (req, res) {
 )
 });
 
-app.get('/events',function(req,res){
-	res.render('events',
-	{
-		page: 'events',
-		title: 'Events',
-		isEvents: true,
-	}
-)
+app.post('/addEvent',function(req,res){
+var injson = {
+   "eventID": null,
+   "eventDate": req.body.datepicker,
+   "eventName": req.body.EventName,
+   "EventDescription": req.body.EventDescription
+ }
+   console.log(injson);
+
+ con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "');", injson, function(err, rows, fields) {
+
+   // build json result object
+   var outjson = {};
+   if (err) {
+     // query failed
+     console.log(err);
+     outjson.success = false;
+     outjson.message = "Query failed: " + err;
+   }
+   else {
+     // query successful
+     outjson.success = true;
+     outjson.message = "Query successful!";
+   }
+
+   res.redirect('.');
+ });
 });
 
 
