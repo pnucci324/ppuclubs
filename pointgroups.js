@@ -191,7 +191,7 @@ var injson = {
      outjson.message = "Query successful!";
    }
 
-   res.redirect('.');
+   res.redirect('calendar');
  });
 });
 
