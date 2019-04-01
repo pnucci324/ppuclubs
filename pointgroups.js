@@ -114,14 +114,43 @@ console.log(injson);
     });
 });
 
+app.post('/addEvent', function(req, res){
+  var injson = {
+    "eventID": null,
+    "eventDate": req.body.datepicker,
+    "eventName": req.body.EventName,
+    "EventDescription": req.body.EventDescription
+  }
+    console.log(injson);
+
+  con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "');", injson, function(err, rows, fields) {
+
+    // build json result object
+    var outjson = {};
+    if (err) {
+      // query failed
+      console.log(err);
+      outjson.success = false;
+      outjson.message = "Query failed: " + err;
+    }
+    else {
+      // query successful
+      outjson.success = true;
+      outjson.message = "Query successful!";
+    }
+
+    res.redirect('calendar');
+  });
+});
+
 app.post('/create', function (req, res) {
   console.log("working");
-  var injson = {
-    "GroupID": null,
-    "GroupName":req.body.GroupName,
-    "GroupDescription": req.body.GroupDescription
-};
-console.log(injson);
+    var injson = {
+      "GroupID": null,
+      "GroupName":req.body.GroupName,
+      "GroupDescription": req.body.GroupDescription
+  };
+    console.log(injson);
     // query the database
     con.query("INSERT INTO GroupInfo (GroupName,GroupDescription) VALUES ('" + req.body.GroupName + "', '" + req.body.GroupDescription + "');", injson, function(err, rows, fields) {
       // build json result object
@@ -141,10 +170,58 @@ console.log(injson);
       // return json object that contains the result of the query
           console.log(req.body.GroupName);
 
-      res.redirect('groups?ID=' + rows.insertId);
+      res.redirect('groups?ID=' + rows.insertID);
     });
 });
 
+function removeUser(userid, groupid, cb){
+  var sql = "DELETE FROM GroupCreate WHERE UserInfo_UserID = " + userid + " AND GroupInfo_GroupID = " + groupid;
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Number of records deleted: " + result.affectedRows);
+    cb();
+  });
+  }
+
+
+app.post('/deleteUser', function (req, res) {
+  console.log(req.body.userID + " " + req.body.groupID);
+  removeUser(req.body.userID, req.body.groupID, function(){
+     res.send({ success: true })
+  });
+});
+
+
+app.post('/AddUser', function (req, res) {
+  console.log("working");
+    var injson = {
+      "UserID": null,
+      "UserEmail":req.body.UserName,
+      "GroupName":req.body.GroupName
+  };
+    console.log(injson);
+    // query the database
+    con.query("insert into GroupCreate (UserInfo_UserID, GroupInfo_GroupID, AdminStatus) values ('" + req.body.UserName + "', '" + req.body.GroupName + "', 0);", injson, function(err, rows, fields) {
+      // build json result object
+      var outjson = {};
+      if (err) {
+        // query failed
+        console.log(err);
+        outjson.success = false;
+        outjson.message = "Query failed: " + err;
+      }
+      else {
+        // query successful
+        console.log(rows);
+        outjson.success = true;
+        outjson.message = "Query successful!";
+      }
+      // return json object that contains the result of the query
+          console.log(req.body.GroupName);
+
+      res.redirect('groups');
+    });
+});
 
 app.get('/', function(req, res) {
   res.render('home',
@@ -155,8 +232,30 @@ app.get('/', function(req, res) {
 );
 });
 
+app.get('/AddUser', function(req, res) {
+  res.render('AddUser',
+  {
+    page: "AddUser",
+    title: "PPUclubs",
+  }
+);
+});
+
 
 app.get('/calendar', function (req, res) {
+
+var sqlQuery = con.query('Select * from EventInfo where eventDate = ' + req.body.eventDate );
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+    res.render('groups', {
+      title: "Example Database - Is this working??",
+      results: results
+    });
+    console.log(results);
+  });
+
 	res.render('calendar',
   {
     page:  "calendar",
@@ -166,34 +265,6 @@ app.get('/calendar', function (req, res) {
 )
 });
 
-app.post('/addEvent',function(req,res){
-var injson = {
-   "eventID": null,
-   "eventDate": req.body.datepicker,
-   "eventName": req.body.EventName,
-   "EventDescription": req.body.EventDescription
- }
-   console.log(injson);
-
- con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "');", injson, function(err, rows, fields) {
-
-   // build json result object
-   var outjson = {};
-   if (err) {
-     // query failed
-     console.log(err);
-     outjson.success = false;
-     outjson.message = "Query failed: " + err;
-   }
-   else {
-     // query successful
-     outjson.success = true;
-     outjson.message = "Query successful!";
-   }
-
-   res.redirect('calendar');
- });
-});
 
 
 app.get('/groups', function(req, res){
@@ -205,7 +276,8 @@ app.get('/groups', function(req, res){
 
     res.render('groups', {
       title: "Example Database - Is this working??",
-      results: results
+      results: results,
+      groupName: results[0].GroupName
     });
     console.log(results);
   });
@@ -370,7 +442,7 @@ app.post('/process', function (req, res) {
 		loginCounter += 1;
 		req.session.user = {
 			username: req.body.username,
-			password: req.body.password, 
+			password: req.body.password,
 		};
 		console.log("test");
 		verifyUser(req.session.user, function(result) {
