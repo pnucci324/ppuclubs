@@ -1,9 +1,11 @@
-{{#each results}}
-<h1 class="display-1 text-center">Welcome to {{this.GroupName}}'s Homepage</h1>
-{{/each}}
+
+
+
+<h1 class="display-1 text-center">Welcome to {{this.groupName}}'s Homepage</h1>
+
 <p class="lead text-center"> Current Members </p>
 <div class="container align-center">
-<button type="button" class="btn btn-success">Add a Member</button>
+<button type="button" class="btn btn-success"><a href="AddUser">Add a Member</a></button>
 <button type="button" class="btn btn-info"><a href="addEvent">Add an Event</button>
 <button type="button" class="btn btn-info"><a href="events">View Events</a></button>
 </div>
@@ -14,6 +16,7 @@
       <th scope="col"> First Name </th>
       <th score="col"> Last Name </th>
       <th score="col"> Email </th>
+      <th score="col"> Id </th>
     </thead>
     <tbody>
       {{#each results}}
@@ -21,7 +24,8 @@
         <td>{{this.UserFirstName}}</td>
         <td>{{this.UserLastName}}</td>
         <td><a href="mailto:{{this.UserEmail}}">{{this.UserEmail}}</a></td>
-        <td><button onclick="removeUser()" type="button" class="btn btn-danger">Remove Member</button></td>
+        <td>{{this.UserID}}</td>
+        <td><button id="deleteUser_{{this.UserID}}_{{this.GroupID}}" type="button" class="btn btn-danger deleteUser" >Remove Member</button></td>
         </tr>
         {{/each}}
       </tbody>
