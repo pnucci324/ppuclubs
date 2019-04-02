@@ -191,38 +191,6 @@ app.post('/deleteUser', function (req, res) {
   });
 });
 
-
-app.post('/AddUser', function (req, res) {
-  console.log("working");
-    var injson = {
-      "UserID": null,
-      "UserEmail":req.body.UserName,
-      "GroupName":req.body.GroupName
-  };
-    console.log(injson);
-    // query the database
-    con.query("insert into GroupCreate (UserInfo_UserID, GroupInfo_GroupID, AdminStatus) values ('" + req.body.UserName + "', '" + req.body.GroupName + "', 0);", injson, function(err, rows, fields) {
-      // build json result object
-      var outjson = {};
-      if (err) {
-        // query failed
-        console.log(err);
-        outjson.success = false;
-        outjson.message = "Query failed: " + err;
-      }
-      else {
-        // query successful
-        console.log(rows);
-        outjson.success = true;
-        outjson.message = "Query successful!";
-      }
-      // return json object that contains the result of the query
-          console.log(req.body.GroupName);
-
-      res.redirect('groups');
-    });
-});
-
 app.get('/', function(req, res) {
   res.render('home',
   {
@@ -232,7 +200,7 @@ app.get('/', function(req, res) {
 );
 });
 
-app.get('/AddUser', function(req, res) {
+app.get('/addUser', function(req, res) {
   res.render('AddUser',
   {
     page: "AddUser",
