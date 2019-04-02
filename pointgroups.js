@@ -201,7 +201,7 @@ app.get('/', function(req, res) {
 });
 
 app.get('/addUser', function(req, res) {
-  res.render('AddUser',
+  res.render('addUser',
   {
     page: "AddUser",
     title: "PPUclubs",
