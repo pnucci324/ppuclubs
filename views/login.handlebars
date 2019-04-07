@@ -1,3 +1,4 @@
+
 <div class="container">
 	<div class="row">
         <div class="span12">
@@ -24,7 +25,7 @@
                             <!-- Username -->
                             <label class="control-label"  for="username">Email address</label>
                             <div class="controls">
-                              <input type="text" id="username" name="username" placeholder="" class="input-xlarge">
+                              <input type="text" id="username" name="UserEmailLogin" placeholder="" class="input-xlarge">
                             </div>
                           </div>
 
@@ -32,7 +33,7 @@
                             <!-- Password-->
                             <label class="control-label" for="password">Password</label>
                             <div class="controls">
-                              <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
+                              <input type="password" id="password" name="UserPasswordLogin" placeholder="" class="input-xlarge">
                             </div>
                           </div>
                           <hr>
@@ -47,22 +48,24 @@
                     </div>
                     <hr>
                     <div class="tab-pane fade" id="create">
-                      <form id="tab" method="POST">
+                      <form action="login" id="tab" method="POST">
                         <label>First Name: </label>
-                        <input type="text" value="" class="input-xlarge">
+                        <input type="text" name="FirstName" value="" class="input-xlarge">
                         <br>
                         <label>Last Name: </label>
-                        <input type="text" value="" class="input-xlarge">
+                        <input type="text" name ="LastName"value="" class="input-xlarge">
                         <br>
                         <label>Email: </label>
-                        <input type="text" value="" class="input-xlarge">
+                        <input type="text" name="Email" value="" class="input-xlarge">
                         <br>
                         <label>Phone Number: </label>
-                        <input type="text" value="" class="input-xlarge">
+                        <input type="text" name="Phone" value="" class="input-xlarge">
                         <br>
+												<label>Password: </label>
+                        <input type="text" name="Password" value="" class="input-xlarge">
                         <div>
                           <br>
-                          <button class="btn btn-primary">Create Account</button>
+                          <button class="btn btn-primary" type="submit">Create Account</button>
                         </div>
                       </form>
                     </div>
