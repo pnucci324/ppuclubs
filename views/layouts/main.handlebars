@@ -8,10 +8,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Point Groups</title>
     <!-- Bootstrap -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+    <script>
+    $( function() {
+      $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    } );
+    </script>
+    <script>
+        $(function() {
+          $(".deleteUser").click( function(e)
+          {
+            console.log($(this).attr("id"));
+            var parts = $(this).attr("id").split("_");
+            //pointgroups.removeUser();
+            $.ajax({
+              type: "POST",
+              url: "deleteUser",
+              data: {
+                userID: parts[1],
+                groupID: parts[2]
+              },
+              success: function(data){
+                console.log(data);
+                location.reload();
+              },
+              error: function(a, b, c){
+                alert(a + b + c);
+                console.log(a);
+                console.log(b);
+                console.log(c);
+              }
+
+            })
+          }
+        );
+      });
+    </script>
+
+
+    <script src="js/bootstrap.min.js"></script>
+    <link href='fullcalendar/fullcalendar.min.css' rel='stylesheet'>
+    <script src="fullcalendar/moment.min.js"></script>
+    <script src="fullcalendar/fullcalendar.min.js"></script>
+
     <style>
       .navbar{
         margin-bottom:0;
@@ -37,8 +80,13 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li class="active"><a href=".">Home <span class="sr-only">(current)</span></a></li>
-            <li><a href="search">Search</a></li>
+            <li><a href="search">Directory</a></li>
             <li><a href="create">Create</a></li>
+
+            <li><a href="login">Login</a></li>
+<!--Head-->
+	    <li><a href="calendar">Calendar</a></li>
+	    <li><a href='events'>Events</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More options <span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -51,7 +99,6 @@
                 <li><a href="https://www.pointpark.edu/">Point Park University  Homepage</a></li>
               </ul>
             </li>
-            <li class="pull-right"><a href="login">Login</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

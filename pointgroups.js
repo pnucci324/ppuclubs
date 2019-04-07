@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 var jquery = require('jquery');
-
+var fs = require('fs');
 var http = require("http");
 var mysql = require("mysql");
 var credentials = require("./credentials");
@@ -24,6 +24,8 @@ app.use('/img', express.static('img'));
 app.use('/js', express.static('js'));
 
 app.set ('port', process.env.PORT || 3000);
+
+//app.set('views', __dirname + '/views');
 
 app.use(require('cookie-parser')(credentials.cookieSecret));
 app.use(require('body-parser').urlencoded({ extended: true }));
@@ -59,7 +61,7 @@ con.connect(function (err) {
 app.get('/search', function(req, res){
   console.log('inside of app.get for the home page');
 
-  var sqlQuery = 'select GroupName, GroupDescription from GroupInfo';
+  var sqlQuery = 'select GroupID, GroupName, GroupDescription from GroupInfo';
 
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
@@ -112,19 +114,43 @@ console.log(injson);
     });
 });
 
+app.post('/addEvent', function(req, res){
+  var injson = {
+    "eventID": null,
+    "eventDate": req.body.datepicker,
+    "eventName": req.body.EventName,
+    "EventDescription": req.body.EventDescription
+  }
+    console.log(injson);
+
+  con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "');", injson, function(err, rows, fields) {
+
+    // build json result object
+    var outjson = {};
+    if (err) {
+      // query failed
+      console.log(err);
+      outjson.success = false;
+      outjson.message = "Query failed: " + err;
+    }
+    else {
+      // query successful
+      outjson.success = true;
+      outjson.message = "Query successful!";
+    }
+
+    res.redirect('calendar');
+  });
+});
+
 app.post('/create', function (req, res) {
   console.log("working");
-
-
-
-  var injson = {
-    "GroupID": null,
-    "GroupName":req.body.GroupName,
-    "GroupDescription": req.body.GroupDescription
-};
-
-
-console.log(injson);
+    var injson = {
+      "GroupID": null,
+      "GroupName":req.body.GroupName,
+      "GroupDescription": req.body.GroupDescription
+  };
+    console.log(injson);
     // query the database
     con.query("INSERT INTO GroupInfo (GroupName,GroupDescription) VALUES ('" + req.body.GroupName + "', '" + req.body.GroupDescription + "');", injson, function(err, rows, fields) {
       // build json result object
@@ -137,24 +163,33 @@ console.log(injson);
       }
       else {
         // query successful
+        console.log(rows);
         outjson.success = true;
         outjson.message = "Query successful!";
       }
       // return json object that contains the result of the query
-console.log(req.body.GroupName);
+          console.log(req.body.GroupName);
 
-      res.redirect('groups');
+      res.redirect('groups?ID=' + rows.insertID);
     });
 });
 
+function removeUser(userid, groupid, cb){
+  var sql = "DELETE FROM GroupCreate WHERE UserInfo_UserID = " + userid + " AND GroupInfo_GroupID = " + groupid;
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Number of records deleted: " + result.affectedRows);
+    cb();
+  });
+  }
 
 
-
-//con.end();
-
-
-
-
+app.post('/deleteUser', function (req, res) {
+  console.log(req.body.userID + " " + req.body.groupID);
+  removeUser(req.body.userID, req.body.groupID, function(){
+     res.send({ success: true })
+  });
+});
 
 app.get('/', function(req, res) {
   res.render('home',
@@ -165,15 +200,58 @@ app.get('/', function(req, res) {
 );
 });
 
-app.get('/search', function (req, res) {
-  res.render('search',
+app.get('/addUser', function(req, res) {
+  res.render('addUser',
   {
-    page: "search",
-    title: "Search",
-    isSearch: true,
+    page: "addUser",
+    title: "PPUclubs",
+  }
+);
+});
+
+
+app.get('/calendar', function (req, res) {
+
+var sqlQuery = con.query('Select * from EventInfo where eventDate = ' + req.body.eventDate );
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+    res.render('groups', {
+      title: "Example Database - Is this working??",
+      results: results
+    });
+    console.log(results);
+  });
+
+	res.render('calendar',
+  {
+    page:  "calendar",
+    title: "Calendar",
+    isCalendar: true,
   }
 )
-})
+});
+
+
+
+app.get('/groups', function(req, res){
+
+  var sqlQuery = 'SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where GroupID = ' + req.query.ID;
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+    res.render('groups', {
+      title: "Example Database - Is this working??",
+      results: results,
+      groupName: results[0].GroupName
+    });
+    console.log(results);
+  });
+});
+
+
 
 app.get('/about', function(req, res) {
   res.render('about',
@@ -184,6 +262,8 @@ app.get('/about', function(req, res) {
   }
 );
 });
+
+
 
 app.get('/login', function(req, res) {
   res.render('login',
@@ -216,45 +296,138 @@ app.get('/contact', function(req, res) {
 );
 });
 
-app.get('/groups', function(req, res){
-
-  var sqlQuery = 'SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where GroupName like "PointPark"';
-
-  con.query(sqlQuery, function(error, results, fields){
-    if(error) throw error;
-
-    console.log("here are the results for your query: ");
-    console.log(results);
-
-    res.render('groups', {
-      title: "Example Database - Is this working??",
-      results: results
-    });
-  });
+app.get('/events', function(req, res){
+  res.render('events');
 });
 
-//Sessions for login or group make
-/*app.post('/process',function(req, res){
-if(req.xhr || req.accepts('json,html') === 'json'){
-res.send({ success: true });
-loginCounter += 1;
-req.session.user = {
-username: req.body.username,
-password: req.body.password,
-};
-console.log('test');
-verifyUser(req.session.user, function(result){
-console.log('Successful login!');
-} else {
-console.log('Unsussessufl login attempt!');
+app.get('/addEvent', function(req, res){
+  res.render('addEvent');
+});
+
+//users
+function users(req,res){
+        var conn = mysql.createConenction(credentials.conenction);
+        //connect to database
+        conn.connect(function (err){
+                if (err){
+                        console.error("ERROR: connot connect: " + err);
+                        return;
+                }
+                //query the database
+                conn.query("SELECT * FROM USERS", function (err, rows, fields){
+                        //build json result object
+                        var outjson = {};
+                        if (err){
+                                //query failed
+                                outjson.success = false;
+                                outjson.message = "Query failed: " + err;
+                        }
+                        else{
+                                //query successful
+                                outjson.success = true;
+                                outjson.message = "Query sucessful!";
+                                outjson.data = rows;
+                        }
+                        //return json object that contains the result of the query
+                        conn.end();
+                        sendResponse(req,res,outjson);
+                });
+        });
 }
-})
+//addUser
+function addUser(req,res){
+	var body= "";
+	req.on('data', function(data){
+		body += data;
+		//1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+		if(body.length > 1e6){
+			//FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
+			req.connection.destroy();
+		}
+	})
+	req.on('end', function(){
+		var injson = JSON.parse(body);
+		var conn = mysql.createConnection(credentials.connection);
+		//connect to database
+		conn.connect(function (err){
+			if(err){
+				console.error("ERROR: cannot conect: " + e);
+				return;
+			}
+			//query the database
+			conn.query("INSERT INTO USER(NAME) VALUE(?)", [injon.name], function(err, rows, fields){
+				//build json resut object
+				var outjson = {};
+				if(err){
+					//query failed
+					outjson.success = false;
+					outjson.message = "Query failed: " + err;
+				}else{
+					//query successful
+					outjson.success = true;
+					ousjson.message = "Query sucessful!";
+				}
+				//return json object that contains the resutl fo the query
+				sendResponse(req, res, outjson);
+			});
+			conn.end();
+		});
+	});
 }
-});*/
+
+
+//verify user
+function verifyUser(attemptCreds, cb){
+	//connect to database
+	var conn = mysql.createConnection(credentials.connection);
+	conn.connect(function (err){
+		if (err){
+			console.error("Error reaching MySQL: ", credentials.connection);
+			return false;
+		}
+		conn.query("SELECT loginId, password FROM ppuclubs.USERS where loginId = (?)", attemptCreds.username, function (err, rows, fields){
+			if(rows.length === 1){
+				//users mached in SQL query, 1 result returned.
+				//Return true if the password matches
+				console.log(rows[0].password === attemptCreds.password);
+				if(rows[0].password === attemptCreds.password){
+					//Login success, passwords match
+					cb(true);
+				}else{
+					//Login failed, passwords do not match
+					cb(false);
+				}
+			}else{
+				cb(false);
+			}
+		});
+	});
+}
+//sessions
+app.post('/process', function (req, res) {
+	if (req.xhr || req.accepts('json,html') === 'json') {
+		res.send({ success: true });
+		loginCounter += 1;
+		req.session.user = {
+			username: req.body.username,
+			password: req.body.password,
+		};
+		console.log("test");
+		verifyUser(req.session.user, function(result) {
+			if (result) {
+				console.log("Successful login!");
+			} else {
+				console.log("Unsuccessful login attempt!");
+			}
+		});
+	}
+});
 
 
 
-//custom 404 page
+
+
+
 app.use(function(req,res){
   res.type('text/plain');
   res.status(404);
@@ -266,7 +439,7 @@ app.use(function(err,req,res,next){
   console.error(err.stack);
   res.type('text/plain');
   res.status(500);
-  res.send('500 - Sever Error');
+  res.send('500 - Server Error');
 });
 
 app.listen(app.get('port'), function(){
