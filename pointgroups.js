@@ -48,14 +48,15 @@ var con = mysql.createConnection({
   multipleStatements: true
 });
 
-
 con.connect(function (err) {
-  if (!err){
+  if (!err)
   console.log("Connection made with the database")
-  }else{
+  else
   console.log("DB connection failed \n Error:" + JSON.stringify(err, undefined, 2));
-}
 });
+
+
+
 
 
 app.get('/search', function(req, res){
@@ -298,7 +299,7 @@ app.get('/groups', function(req, res){
 
 app.get('/profile', function(req, res){
 
-  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserEmail = "agmcmah@pointpark.edu";  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = "1"; Select * from GroupInfo where GroupType = "Sports";'
+  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = "1";  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = "1"; Select * from GroupInfo where GroupType = "Sports";'
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
 
