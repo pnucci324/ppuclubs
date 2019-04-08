@@ -49,6 +49,34 @@
       });
     </script>
 
+    <script>
+/*		$(document).ready(function(){
+			$('#login').on('submit', function(evt){
+				evt.preventDefault();
+				var action = $(this).attr('action');
+				var $container = $(this).closest('.formContainer');
+				$.ajax({
+					url: '/process',
+					type: 'POST',
+					data: $(this).serialize(),
+					success: function(data) {
+						if (data.success) {
+							$container.html('<h2>Thank you!</h2>');
+							console.log('Marginal success.');
+							console.log(data);
+						} else {
+							$container.html('There was a problem.');
+							console.log('Total failure.');
+						}
+                                	},
+					error: function(){
+						alert('There was a problem');
+					}
+				});
+			});
+		}); */
+	</script>
+
 
     <script src="js/bootstrap.min.js"></script>
     <link href='fullcalendar/fullcalendar.min.css' rel='stylesheet'>
@@ -79,11 +107,12 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li class="active"><a href=".">Home <span class="sr-only">(current)</span></a></li>
+            <li><a href=".">Home</a></li>
             <li><a href="search">Directory</a></li>
             <li><a href="create">Create</a></li>
-
             <li><a href="login">Login</a></li>
+            <li><a href="CreateAccount">Register</a></li>
+            <li><a href="profile">Profile</a></li>
 <!--Head-->
 	    <li><a href="calendar">Calendar</a></li>
 	    <li><a href='events'>Events</a></li>
