@@ -48,15 +48,14 @@ var con = mysql.createConnection({
   multipleStatements: true
 });
 
+
 con.connect(function (err) {
-  if (!err)
+  if (!err){
   console.log("Connection made with the database")
-  else
+  }else{
   console.log("DB connection failed \n Error:" + JSON.stringify(err, undefined, 2));
+}
 });
-
-
-
 
 
 app.get('/search', function(req, res){
