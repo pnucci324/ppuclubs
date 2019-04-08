@@ -1,0 +1,21 @@
+<div style="height:25px"></div>
+<h1 class="text-center">Group Directory</h1>
+<div class="container">
+
+      <table class="table">
+        <thead>
+          <th scope="col"> Group Name </th>
+          <th score="col"> Group Description </th>
+        </thead>
+      <tbody>
+        {{#each results}}
+        <tr>
+            <td>{{this.GroupName}}</td>
+            <td>{{this.GroupDescription}}</td>
+            <td><button onclick="joinGroup()" type="submit" class="btn btn-info">Join</button>
+            <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+</div>
