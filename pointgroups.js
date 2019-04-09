@@ -258,25 +258,21 @@ app.get('/addUser', function(req, res) {
 
 app.get('/calendar', function (req, res) {
 
-var sqlQuery = con.query('Select * from EventInfo where eventDate = ' + req.body.eventDate );
+var sqlQuery = 'Select * from EventInfo;'
 
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
 
-    res.render('groups', {
-      title: "Example Database - Is this working??",
+    res.render('calendar',
+    {
+      page:  "calendar",
+      title: "Calendar",
+      isCalendar: true,
       results: results
-    });
+    })
     console.log(results);
   });
 
-	res.render('calendar',
-  {
-    page:  "calendar",
-    title: "Calendar",
-    isCalendar: true,
-  }
-)
 });
 
 
@@ -308,12 +304,13 @@ app.get('/profile', function(req, res){
       results: results[0],
       results1: results[1],
       results2: results[2],
-      Username: results[0].UserFirstName + " " + results[0].UserLastName
+      Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
     });
     console.log(results[0]);
     console.log(results[1]);
     console.log(results[2]);
   });
+
 });
 
 
