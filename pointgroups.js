@@ -9,6 +9,7 @@ var qs = require("querystring");
 var session = require('express-session');
 
 
+
 //set up handlebars
 var handlebars = require('express-handlebars')
 .create({ defaultLayout:'main'});
@@ -55,28 +56,20 @@ con.connect(function (err) {
   console.log("DB connection failed \n Error:" + JSON.stringify(err, undefined, 2));
 });
 
+// functions
 
 
-
-
-app.get('/search', function(req, res){
-  console.log('inside of app.get for the home page');
-
-  var sqlQuery = 'select GroupID, GroupName, GroupDescription from GroupInfo';
-
-  con.query(sqlQuery, function(error, results, fields){
-    if(error) throw error;
-
-    console.log("here are the results for your query: ");
-    console.log(results);
-
-    res.render('search', {
-      title: "Example Database - Is this working??",
-      results: results
-    });
+function removeUser(userid, groupid, cb){
+  var sql = "DELETE FROM GroupCreate WHERE UserInfo_UserID = " + userid + " AND GroupInfo_GroupID = " + groupid;
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("Number of records deleted: " + result.affectedRows);
+    cb();
   });
-});
- // login page
+  }
+
+// app.post
+
 app.post('/CreateAccount', function (req, res) {
   var injson = {
     "UserID": null,
@@ -110,53 +103,6 @@ console.log(injson);
 
 });
 
-
-function verifyUser(attemptCreds, cb){
-	//connect to database
-	var conn = mysql.createConnection(credentials.connection);
-	conn.connect(function (err){
-		if (err){
-			console.error("Error reaching MySQL: ", credentials.connection);
-			return false;
-		}
-		conn.query("SELECT UserEmail, UserPassword FROM ppuclubs.USERS where UserEmail = (?)", attemptCreds.UserEmailLogin, function (err, rows, fields){
-			if(rows.length === 1){
-				//users mached in SQL query, 1 result returned.
-				//Return true if the password matches
-				console.log(rows[0].UserPassword === attemptCreds.UserPasswordLogin);
-				if(rows[0].UserPassword === attemptCreds.UserPasswordLogin){
-					//Login success, passwords match
-					cb(true);
-				}else{
-					//Login failed, passwords do not match
-					cb(false);
-				}
-			}else{
-				cb(false);
-			}
-		});
-	});
-}
-
-
-app.post('/process', function (req, res) {
-	if (req.xhr || req.accepts('json,html') === 'json') {
-		res.send({ success: true });
-		loginCounter += 1;
-		req.session.user = {
-			username: req.body.UserEmailLogin,
-			password: req.body.UserPasswordLogin,
-		};
-		console.log("test");
-		verifyUser(req.session.user, function(result) {
-			if (result) {
-				console.log("Successful login!");
-			} else {
-				console.log("Unsuccessful login attempt!");
-			}
-		});
-	}
-});
 
 app.post('/addEvent', function(req, res){
   var injson = {
@@ -219,15 +165,6 @@ app.post('/create', function (req, res) {
     });
 });
 
-function removeUser(userid, groupid, cb){
-  var sql = "DELETE FROM GroupCreate WHERE UserInfo_UserID = " + userid + " AND GroupInfo_GroupID = " + groupid;
-  con.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log("Number of records deleted: " + result.affectedRows);
-    cb();
-  });
-  }
-
 
 app.post('/deleteUser', function (req, res) {
   console.log(req.body.userID + " " + req.body.groupID);
@@ -236,7 +173,48 @@ app.post('/deleteUser', function (req, res) {
   });
 });
 
+app.post('/joingroup'), function(req, res) {
+
+}
+
+app.post('/login', function(req, res) {
+
+
+var sql = "Select * from UserInfo where UserEmail = '"+ req.body.UserEmailLogin +"'";
+con.query(sql, function(error, results, fields){
+  if(error){
+    console.log(error);
+  }else if(req.body.UserPasswordLogin != results[0].UserPassword){
+    console.log("Wrong password entered. User entered " + req.body.UserPasswordLogin + " and actual password is " + results[0].UserPassword);
+    res.redirect(req.originalUrl);
+  }else{
+    console.log(results);
+    res.redirect('profile?ID=' + results[0].UserID);
+  }
+})
+});
+
+
+// app.get
+
+app.get('/search', function(req, res){
+  console.log('inside of app.get for the home page');
+
+  var sqlQuery = 'select GroupID, GroupName, GroupDescription from GroupInfo';
+
+  con.query(sqlQuery, function(error, results, fields){
+    if(error) throw error;
+
+
+    res.render('search', {
+      title: "Example Database - Is this working??",
+      results: results
+    });
+  });
+});
+
 app.get('/', function(req, res) {
+  const {userID} = req.session
   res.render('home',
   {
     page: "home",
@@ -258,25 +236,21 @@ app.get('/addUser', function(req, res) {
 
 app.get('/calendar', function (req, res) {
 
-var sqlQuery = con.query('Select * from EventInfo where eventDate = ' + req.body.eventDate );
+var sqlQuery = 'Select * from EventInfo;'
 
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
 
-    res.render('groups', {
-      title: "Example Database - Is this working??",
+    res.render('calendar',
+    {
+      page:  "calendar",
+      title: "Calendar",
+      isCalendar: true,
       results: results
-    });
+    })
     console.log(results);
   });
 
-	res.render('calendar',
-  {
-    page:  "calendar",
-    title: "Calendar",
-    isCalendar: true,
-  }
-)
 });
 
 
@@ -298,8 +272,41 @@ app.get('/groups', function(req, res){
 });
 
 app.get('/profile', function(req, res){
+  req.session.ID = req.query.ID;
+  var tmp = req.query.ID;
+  var tmp = parseInt(tmp);
+  console.log("Your session ID = " + req.session.ID);
+  console.log(tmp);
 
-  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = "1";  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = "1"; Select * from GroupInfo where GroupType = "Sports";'
+  var sqlQuery = //'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID; +
+  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';' +
+  ' Select * from GroupInfo where GroupType = "Sports";'
+  con.query(sqlQuery, function(error, results, fields){
+    if(results[0].length === 0){
+      console.log("User is not in any group");
+      res.redirect('search')
+    }else{
+
+      res.render('profile', {
+        title: "Profile",
+        //results: results[0],
+        results1: results[0],
+        results2: results[1],
+        Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
+      });
+      console.log(results[0]);
+
+    }
+
+  });
+
+});
+
+/*app.get('/profile', function(req, res){
+
+  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = 1';
+  + ' SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = 1';
+  + ' Select * from GroupInfo where GroupType = "Sports";'
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
 
@@ -308,13 +315,14 @@ app.get('/profile', function(req, res){
       results: results[0],
       results1: results[1],
       results2: results[2],
-      Username: results[0].UserFirstName + " " + results[0].UserLastName
+    Username: results[0].UserFirstName + " " + results[0].UserLastName
     });
     console.log(results[0]);
     console.log(results[1]);
     console.log(results[2]);
   });
-});
+
+});*/
 
 
 app.get('/about', function(req, res) {
@@ -327,15 +335,9 @@ app.get('/about', function(req, res) {
 );
 });
 
-app.get('/login', function(req, res) {
-  res.render('login',
-  {
-    page: "login",
-    title: "login",
-    isLogin: true,
-  }
-);
-});
+app.get('/login', function(req, res){
+  res.render('login');
+})
 
 app.get('/CreateAccount', function(req, res) {
   res.render('CreateAccount',
