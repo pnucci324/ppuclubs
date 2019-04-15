@@ -12,8 +12,8 @@
         <tr>
             <td>{{this.GroupName}}</td>
             <td>{{this.GroupDescription}}</td>
-            <td><button onclick="joinGroup()" type="submit" class="btn btn-info">Join</button>
-            <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
+        <td><button id="joingroup_{{this.UserID}}_{{this.GroupID}}" type="button" class="btn btn-danger joingroup" >Join Group</button></td> 
+        <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
         </tr>
         {{/each}}
       </tbody>

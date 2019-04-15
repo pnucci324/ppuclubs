@@ -48,34 +48,35 @@
         );
       });
     </script>
-
     <script>
-/*		$(document).ready(function(){
-			$('#login').on('submit', function(evt){
-				evt.preventDefault();
-				var action = $(this).attr('action');
-				var $container = $(this).closest('.formContainer');
-				$.ajax({
-					url: '/process',
-					type: 'POST',
-					data: $(this).serialize(),
-					success: function(data) {
-						if (data.success) {
-							$container.html('<h2>Thank you!</h2>');
-							console.log('Marginal success.');
-							console.log(data);
-						} else {
-							$container.html('There was a problem.');
-							console.log('Total failure.');
-						}
-                                	},
-					error: function(){
-						alert('There was a problem');
-					}
-				});
-			});
-		}); */
-	</script>
+        $(function() {
+          $(".joingroup").click( function(e)
+          {
+            console.log($(this).attr("id"));
+            var parts = $(this).attr("id").split("_");
+            $.ajax({
+              type: "POST",
+              url: "joingroup",
+              data: {
+                UserID: parts[1],
+                GroupID: parts[2]
+              },
+              success: function(data){
+                console.log(data);
+                location.reload();
+              },
+              error: function(a, b, c){
+                alert(a + b + c);
+                console.log(a);
+                console.log(b);
+                console.log(c);
+              }
+
+            })
+          }
+        );
+      });
+    </script>
 
 
     <script src="js/bootstrap.min.js"></script>
@@ -112,7 +113,7 @@
             <li><a href="create">Create</a></li>
             <li><a href="login">Login</a></li>
             <li><a href="CreateAccount">Register</a></li>
-            <li><a href="profile">Profile</a></li>
+          <!--  <li><a href="profile?ID=" + req.sessions.ID>Profile</a></li> -->
 <!--Head-->
 	    <li><a href="calendar">Calendar</a></li>
 	    <li><a href='events'>Events</a></li>
