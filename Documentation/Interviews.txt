@@ -1,0 +1,7 @@
+Interviews
+ Person 1: Too many buttons on the Nav Bar
+	   Not enough on the homepage
+	   Calendar to be more interactive
+Person 2: Its way more user-friendly
+	  No section to submit forms 
+          Wished the login would connect to Microsoft
