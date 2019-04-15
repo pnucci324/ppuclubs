@@ -315,23 +315,21 @@ app.get('/profile', function(req, res){
       results: results[0],
       results1: results[1],
       results2: results[2],
-<<<<<<< HEAD
+
     Username: results[0].UserFirstName + " " + results[0].UserLastName
-=======
+
       Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
->>>>>>> master
+
     });
     console.log(results[0]);
     console.log(results[1]);
     console.log(results[2]);
   });
 
-<<<<<<< HEAD
-});*/
-=======
-});
->>>>>>> master
 
+});
+
+});*/
 
 app.get('/about', function(req, res) {
   res.render('about',
