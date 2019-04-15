@@ -303,32 +303,24 @@ app.get('/profile', function(req, res){
 });
 
 /*app.get('/profile', function(req, res){
-
   var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = 1';
   + ' SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = 1';
   + ' Select * from GroupInfo where GroupType = "Sports";'
   con.query(sqlQuery, function(error, results, fields){
     if(error) throw error;
-
     res.render('profile', {
       title: "Profile",
       results: results[0],
       results1: results[1],
       results2: results[2],
-
     Username: results[0].UserFirstName + " " + results[0].UserLastName
-
       Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
-
     });
     console.log(results[0]);
     console.log(results[1]);
     console.log(results[2]);
   });
-
-
 });
-
 });*/
 
 app.get('/about', function(req, res) {
