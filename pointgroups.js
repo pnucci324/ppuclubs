@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var jquery = require('jquery');
 var fs = require('fs');
-<<<<<<< HEAD
 var http = require("http");
 var mysql = require("mysql");
 var credentials = require("./credentials");
