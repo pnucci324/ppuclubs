@@ -328,9 +328,8 @@ app.get('/profile', function(req, res){
 
 <<<<<<< HEAD
 });*/
-=======
-});
->>>>>>> master
+
+
 
 
 app.get('/about', function(req, res) {
