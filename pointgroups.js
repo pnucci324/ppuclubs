@@ -144,6 +144,8 @@ app.post('/addEvent', function(req, res){
 
 app.post('/create', function (req, res) {
   console.log("working");
+
+
   var injson = {
     "GroupID": null,
     "GroupName":req.body.GroupName,
@@ -151,28 +153,40 @@ app.post('/create', function (req, res) {
     "GroupType": req.body.selectpicker
   };
   console.log(injson);
+
+
+  var sql = "INSERT INTO GroupInfo (GroupName,GroupDescription,GroupType) VALUES ('" + req.body.GroupName + "', '" + req.body.GroupDescription + "', '" + req.body.selectpicker + "');"
+
+
+
+
   // query the database
-  con.query("INSERT INTO GroupInfo (GroupName,GroupDescription,GroupType) VALUES ('" + req.body.GroupName + "', '" + req.body.GroupDescription + "', '" + req.body.selectpicker + "');", injson, function(err, rows, fields) {
+  con.query(sql, function(err, result, fields) {
     // build json result object
     var outjson = {};
     if (err) {
       // query failed
       console.log(err);
-      outjson.success = false;
-      outjson.message = "Query failed: " + err;
     }
     else {
       // query successful
-      console.log(rows);
-      outjson.success = true;
-      outjson.message = "Query successful!";
+      var sql2 = "insert into GroupCreate (UserInfo_UserID, GroupInfo_GroupID, AdminStatus) values ('" + req.session.ID + "','" + result.insertId + "', 1);"
+      con.query(sql2, function(err, result, fields){
+        if (err) {
+          console.log(err);
+        }
+        console.log("User was added into the group");
+      });
+      console.log(result)
+      console.log("successful");
     }
     // return json object that contains the result of the query
     console.log(req.body.GroupName);
 
-    res.redirect('groups?ID=' + rows.insertID);
+   res.redirect('groups?ID=' + result.insertId);
   });
 });
+
 
 
 app.post('/deleteUser', function (req, res) {
@@ -224,17 +238,13 @@ app.get('/search', function(req, res){
       results: results,
       UserID: results.UserID
     });
-    console.log(tmp);
   });
 });
 
 app.get('/', function(req, res) {
-  res.render('home',
-  {
-    page: "home",
-    title: "PPUclubs",
-  }
-);
+console.log("In the home route");
+
+res.render('home');
 });
 
 app.get('/addUser', function(req, res) {
@@ -290,11 +300,10 @@ app.get('/groups', function(req, res){
 
 app.get('/profile', function(req, res){
   var tmp = req.query.ID;
-  var tmp = parseInt(tmp);
   console.log("Your session ID = " + req.session.ID);
   console.log(tmp);
 
-  var sqlQuery = //'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID; +
+  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID +';' +
   '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';' +
   ' Select * from GroupInfo where GroupType = "Sports";'
   con.query(sqlQuery, function(error, results, fields){
@@ -305,12 +314,14 @@ app.get('/profile', function(req, res){
 
       res.render('profile', {
         title: "Profile",
-        //results: results[0],
-        results1: results[0],
-        results2: results[1],
+        results: results[0],
+        results1: results[1],
+        results2: results[2],
         Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
       });
       console.log(results[0]);
+      console.log(results[1]);
+      console.log(results[2]);
 
     }
 
