@@ -244,7 +244,7 @@ app.get('/search', function(req, res){
 app.get('/', function(req, res) {
 console.log("In the home route");
 
-var sql
+res.render('home');
 });
 
 app.get('/addUser', function(req, res) {
