@@ -225,8 +225,12 @@ app.post('/login', function(req, res) {
 // app.get
 
 app.get('/search', function(req, res){
-  console.log('inside of app.get for the home page');
+  console.log('inside of app.get for the search page');
   var tmp = req.session.ID;
+
+  if(!req.session.ID){
+    res.redirect('login');
+  }else{
   var sqlQuery = 'select UserID, GroupID, GroupName, GroupDescription from GroupInfo, UserInfo where UserID = ' + tmp + ';'
 
   con.query(sqlQuery, function(error, results, fields){
@@ -239,6 +243,7 @@ app.get('/search', function(req, res){
       UserID: results.UserID
     });
   });
+}
 });
 
 app.get('/', function(req, res) {
@@ -304,13 +309,13 @@ app.get('/profile', function(req, res){
   console.log(tmp);
 
   var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID +';' +
-  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';' +
-  ' Select * from GroupInfo where GroupType = "Sports";'
+  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'
   con.query(sqlQuery, function(error, results, fields){
     if(results[0].length === 0){
       console.log("User is not in any group");
       res.redirect('search')
     }else{
+
 
       res.render('profile', {
         title: "Profile",
