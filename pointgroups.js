@@ -146,6 +146,9 @@ app.post('/addEvent', function(req, res){
 });
 
 app.post('/create', function (req, res) {
+  if(!req.session.ID){
+    res.redirect('login');
+  }
   console.log("working");
 
 
