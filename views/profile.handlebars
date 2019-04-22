@@ -1,12 +1,19 @@
 <h1 class="display-1 text-center">Hello {{this.Username}}</h1>
 <div class="container">
 <p class="h1 text-center">Visit your groups</p>
+<br>
 <table class="table">
 <tbody>
+  <thead>
+    <th scope="col"> Group Name </th>
+    <th score="col"> Group Description </th>
+    <th score="col"> Group Type </th>
+  </thead>
   {{#each results1}}
   <tr>
       <td>{{this.GroupName}}</td>
       <td>{{this.GroupDescription}}</td>
+      <td>{{this.GroupType}}</td>
       <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
   </tr>
   {{/each}}
@@ -15,12 +22,20 @@
 </div>
 <div class="container">
   <p class="h1 text-center">Most Popular Groups!</p>
+  <br>
   <table class="table">
   <tbody>
+    <thead>
+      <th scope="col"> Group Name </th>
+      <th score="col"> Group Description </th>
+      <th score="col"> Group Type </th>
+    </thead>
     {{#each results2}}
     <tr>
         <td>{{this.GroupName}}</td>
         <td>{{this.GroupDescription}}</td>
+        <td>{{this.GroupType}}</td>
+        <td><button id="joingroup_{{this.UserID}}_{{this.GroupID}}" type="button" class="btn btn-danger joingroup" >Join Group</button></td>
         <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
     </tr>
     {{/each}}
