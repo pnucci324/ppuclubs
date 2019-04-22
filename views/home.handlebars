@@ -9,15 +9,34 @@
 
 <!-- TYPOGRAPHY -->
 <div class="container">
-  <h1 class="page-header">Hello Point Park University Students!</h1>
+  <h1 class="page-header text-center">Hello Point Park University Students!</h1>
   <p class="lead mark">If you're looking to join a university group or creating a group for your organization please select the search tab or the create tab.</p>
   <hr>
 
 
 <div class="container">
-  <p>ITSO is having a pizza party on Wednesday 17th of April in the West Penn Lobby at 5pm. </p>
-  <p>The Baseball Club is hosting trials for those who want to join on September 9th at the stadium at 4pm.</p>
-  <p>The Point Groups will have a meeting this Wednesday at 5pm to continue making the site work.</p>
+  <h1 class = "text-center"> Today's Events </h1>
+  <hr>
+  <table class="table">
+    <thead>
+      <th scope="col"> Event Date </th>
+      <th score="col"> Event Name </th>
+      <th score="col"> Event Description </th>
+      <th score="col"> Location </th>
+    </thead>
+    <tbody>
+      {{#each results}}
+      <tr>
+        <td>{{this.eventDate}}</td>
+        <td>{{this.eventName}}</td>
+        <td>{{this.eventDescription}}</td>
+        <td>{{this.eventRoom}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
   <!-- CLEAR FLOAT -->
   <div class="clearfix"></div>
 

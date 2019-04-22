@@ -46,7 +46,8 @@ var con = mysql.createConnection({
   user: 'ppuclubs',
   password: 'ppuclubs',
   database: 'ppuclubs',
-  multipleStatements: true
+  multipleStatements: true,
+  dateStrings: true
 });
 
 con.connect(function (err) {
@@ -118,11 +119,12 @@ app.post('/addEvent', function(req, res){
     "eventID": null,
     "eventDate": req.body.datepicker,
     "eventName": req.body.EventName,
-    "EventDescription": req.body.EventDescription
+    "EventDescription": req.body.EventDescription,
+    "EventLocation": req.body.EventLocation
   }
   console.log(injson);
 
-  con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "');", injson, function(err, rows, fields) {
+  con.query("INSERT INTO EventInfo (eventDate,eventName,EventDescription,EventRoom) VALUES ('" + req.body.datepicker + "', '" + req.body.EventName + "', '" + req.body.EventDescription + "', '" + req.body.EventLocation + "');",injson, function(err, rows, fields) {
 
     // build json result object
     var outjson = {};
@@ -136,6 +138,7 @@ app.post('/addEvent', function(req, res){
       // query successful
       outjson.success = true;
       outjson.message = "Query successful!";
+      console.log(rows);
     }
 
     res.redirect('calendar');
@@ -223,6 +226,37 @@ app.post('/login', function(req, res) {
 
 
 // app.get
+app.get('/logout', function(req,res){
+  req.session.destroy();
+  res.redirect('/');
+});
+
+app.get('/profileSession', function(req, res){
+  if(!req.session.ID){
+    res.redirect('login');
+  }else{
+
+  var tmp = req.session.ID;
+  console.log("Your session ID = " + req.session.ID);
+  console.log(tmp);
+
+
+  var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + tmp +';' +
+  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'
+  con.query(sqlQuery, function(error, results, fields){
+
+      res.render('profile', {
+        title: "Profile",
+        results: results[0],
+        results1: results[1],
+        Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
+      });
+      console.log(results[0]);
+      console.log(results[1]);
+
+    });
+  };
+});
 
 app.get('/search', function(req, res){
   console.log('inside of app.get for the search page');
@@ -247,21 +281,31 @@ app.get('/search', function(req, res){
 });
 
 app.get('/', function(req, res) {
+console.log(req.session.ID);
 console.log("In the home route");
+var today = new Date();
+var dateBefore = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+(today.getDate()-1);
+var dateAfter = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+(today.getDate()+1);
+var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+var dateBefore = ( "'" + dateBefore + "'" );
+var dateAfter = ( "'" + dateAfter + "'" );
 
-res.render('home');
+
+console.log(dateBefore);
+console.log(dateAfter);
+console.log(date);
+var query = 'select * from EventInfo where DATE(eventDate) BETWEEN ' +  dateBefore  +  ' AND ' +  dateAfter + ';'
+console.log(query);
+con.query(query, function(error, results, fields){
+  if(error) throw error;
+
+    res.render('home', {
+      title: "Point Groups",
+      results: results
+    });
+  console.log(results);
+  });
 });
-
-app.get('/addUser', function(req, res) {
-  res.render('addUser',
-  {
-    page: "AddUser",
-    title: "PPUclubs",
-  }
-);
-});
-
-
 
 app.get('/calendar', function (req, res) {
 
@@ -308,31 +352,24 @@ app.get('/profile', function(req, res){
   console.log("Your session ID = " + req.session.ID);
   console.log(tmp);
 
+
   var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID +';' +
   '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'
   con.query(sqlQuery, function(error, results, fields){
-    if(results[0].length === 0){
-      console.log("User is not in any group");
-      res.redirect('search')
-    }else{
-
 
       res.render('profile', {
         title: "Profile",
         results: results[0],
         results1: results[1],
-        results2: results[2],
         Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
       });
       console.log(results[0]);
       console.log(results[1]);
-      console.log(results[2]);
 
-    }
+    });
 
   });
 
-});
 
 /*app.get('/profile', function(req, res){
 
