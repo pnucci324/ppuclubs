@@ -1,5 +1,7 @@
 <div style="height:25px"></div>
 <h1 class="text-center">Group Directory</h1>
+
+<hr>
 <div class="container">
 
       <table class="table">
@@ -12,7 +14,7 @@
         <tr>
             <td>{{this.GroupName}}</td>
             <td>{{this.GroupDescription}}</td>
-        <td><button id="joingroup_{{this.UserID}}_{{this.GroupID}}" type="button" class="btn btn-danger joingroup" >Join Group</button></td> 
+        <td><button id="joingroup_{{this.UserID}}_{{this.GroupID}}" type="button" class="btn btn-danger joingroup" >Join Group</button></td>
         <td><button type="submit" class="btn btn-info"><a href="groups?ID={{this.GroupID}}">View</a></button>
         </tr>
         {{/each}}

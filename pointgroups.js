@@ -242,21 +242,27 @@ app.get('/profileSession', function(req, res){
 
 
   var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + tmp +';' +
-  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'
+  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'  +
+  'SELECT  GroupName, GroupDescription, GroupID, count(UserID) FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID GROUP BY GroupID order by count(GroupID) desc limit 7;'
   con.query(sqlQuery, function(error, results, fields){
 
       res.render('profile', {
         title: "Profile",
         results: results[0],
         results1: results[1],
+        results2: results[2],
         Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
       });
       console.log(results[0]);
       console.log(results[1]);
+      console.log(results[2]);
+
 
     });
   };
 });
+
+
 
 app.get('/search', function(req, res){
   console.log('inside of app.get for the search page');
@@ -268,17 +274,18 @@ app.get('/search', function(req, res){
   var sqlQuery = 'select UserID, GroupID, GroupName, GroupDescription from GroupInfo, UserInfo where UserID = ' + tmp + ';'
 
   con.query(sqlQuery, function(error, results, fields){
-    if(error) throw error;
-
-
-    res.render('search', {
-      title: "Example Database - Is this working??",
-      results: results,
-      UserID: results.UserID
-    });
-  });
-}
-});
+    if(error){
+      console.log(error);
+    }else{
+      res.render('search', {
+        title: "Example Database - Is this working??",
+        results: results,
+        UserID: results.UserID
+      }); // ends res.render
+    } // ends else statment
+  }); // ends con.query
+} // ends else statement
+}); //ends app.get
 
 app.get('/', function(req, res) {
 console.log(req.session.ID);
@@ -354,17 +361,20 @@ app.get('/profile', function(req, res){
 
 
   var sqlQuery = 'Select UserID, UserFirstName, UserLastName from UserInfo where UserID = ' + req.query.ID +';' +
-  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';'
+  '  SELECT * FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID Where UserInfo_UserID = ' + tmp + ';' +
+  'SELECT  GroupName, GroupDescription, GroupID, count(UserID) FROM GroupCreate LEFT JOIN UserInfo ON UserInfo.UserID = GroupCreate.UserInfo_UserID LEFT JOIN GroupInfo ON GroupInfo.GroupID = GroupCreate.GroupInfo_GroupID GROUP BY GroupID order by count(GroupID) desc limit 7;'
   con.query(sqlQuery, function(error, results, fields){
 
       res.render('profile', {
         title: "Profile",
         results: results[0],
         results1: results[1],
+        results2: results[2],
         Username: results[0][0].UserFirstName + " " + results[0][0].UserLastName
       });
       console.log(results[0]);
       console.log(results[1]);
+      console.log(results[2]);
 
     });
 
